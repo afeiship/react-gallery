@@ -88,3 +88,4 @@ class App extends React.Component{
 
 ## resouces:
 + https://sachinchoolur.github.io/lightgallery.js/#lg=1&slide=2
++ https://desmonding.me/zooming/
