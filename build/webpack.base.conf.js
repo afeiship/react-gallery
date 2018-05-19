@@ -15,6 +15,7 @@ var externals = process.env.NODE_ENV === 'production' ? {
   'classnames': 'classnames',
   'react-dom': 'react-dom',
   'noop':'noop',
+  'medium-zoom':'medium-zoom',
   'next-dom-event':'next-dom-event',
   'webkit-sassui-icon-line-arrow':'webkit-sassui-icon-line-arrow',
   'object-assign':'object-assign',
