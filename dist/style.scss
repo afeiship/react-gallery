@@ -41,7 +41,17 @@ $react-gallery-options:(
     position: relative;
     height: 100%;
     background: #000;
+
+    &[data-active=true]{
+      z-index:2;
+    }
+
+    &[data-active=false]{
+      z-index:1;
+    }
+
     > img {
+      transition: transform 0.6s ease;
       object-fit: contain;
       position: absolute;
       width: 100%;

@@ -47,7 +47,9 @@ export default class extends Component {
     this.state = {
       zoom: 1,
       scrollerWidth: 0,
-      activeIndex: 0
+      activeIndex: 0,
+      pageX: 0,
+      pageY: 0
     };
   }
 
@@ -57,29 +59,11 @@ export default class extends Component {
     this._root = root;
     this.setState({ scrollerWidth: root.clientWidth * value.length });
     this.attachEvents();
-    // this.attachZoom();
   }
 
   componentWillUnmount() {
     this._root = null;
     this.detachEvents();
-  }
-
-  attachZoom(){
-    mediumZoom('[data-action="zoom"]', {
-      margin: 24,
-      background: '#000',
-      scrollOffset: 0,
-      metaClick: false,
-      container: {
-        // width: this._root.clientWidth,
-        height: this._root.clientHeight,
-        top: 0,
-        bottom: 0,
-        right: 0,
-        left: 0
-      }
-    })
   }
 
   attachEvents() {
@@ -89,8 +73,6 @@ export default class extends Component {
 
     this._keyupRes = NxDomEvent.on(window, 'keyup', (inEvent) => {
       const { code } = inEvent;
-      console.log(code);
-
       switch (code) {
         case 'ArrowRight':
           !this.nextDisabled && this.next();
@@ -154,13 +136,15 @@ export default class extends Component {
     document.documentElement.webkitRequestFullScreen();
   };
 
-  _onDoubleClick = e =>{
+  _onDoubleClick = inEvent =>{
+    const { pageX, pageY } = inEvent;
+    this.setState({ pageX , pageY});
     this.toggleZoom();
   };
 
   render() {
     const { className, value, ...props } = this.props;
-    const { zoom, scrollerWidth, activeIndex } = this.state;
+    const { zoom, scrollerWidth, activeIndex, pageX, pageY } = this.state;
 
     return (
       <section {...props} ref="root" className={classNames('react-gallery', className)}>
@@ -186,7 +170,10 @@ export default class extends Component {
                   style={{ width: `${100 / value.length}%` }}>
                     <img
                     onDoubleClick={this._onDoubleClick}
-                    style={{ transform: `scale(${zoom})` }}
+                    style={{
+                      transform: `scale(${zoom})`,
+                      transformOrigin: `${pageX}px ${pageY}px`
+                    }}
                     src={item.src}
                     data-action="zoom"
                     data-original={item.original} />
