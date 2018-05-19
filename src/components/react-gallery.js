@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import noop from 'noop';
 import objectAssign from 'object-assign';
 import NxDomEvent from 'next-dom-event';
-import mediumZoom from 'medium-zoom';
 
 //  afeiship/webkit-sassui-icon-line-arrow
 export default class extends Component {
@@ -46,6 +45,7 @@ export default class extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      zoom: 1,
       scrollerWidth: 0,
       activeIndex: 0
     };
@@ -89,12 +89,26 @@ export default class extends Component {
 
     this._keyupRes = NxDomEvent.on(window, 'keyup', (inEvent) => {
       const { code } = inEvent;
+      console.log(code);
+
       switch (code) {
         case 'ArrowRight':
           !this.nextDisabled && this.next();
           break;
         case 'ArrowLeft':
           !this.prevDisabled && this.prev();
+          break;
+        case 'Enter':
+          this.toggleFullScreen();
+          break;
+        case 'Escape':
+          this.toggleZoom();
+          break;
+        case 'ArrowUp':
+          this.zoomIn();
+          break;
+        case 'ArrowDown':
+          this.zoomOut();
           break;
       }
     });
@@ -123,14 +137,38 @@ export default class extends Component {
     });
   };
 
+  zoomIn() {
+    this.setState({ zoom: 1.8 });
+  }
+
+  zoomOut() {
+    this.setState({ zoom: 1 });
+  }
+
+  toggleZoom = () =>{
+    const zoom = this.state.zoom  === 1 ? 1.8 : 1;
+    this.setState({ zoom });
+  };
+
+  toggleFullScreen = () =>{
+    document.documentElement.webkitRequestFullScreen();
+  };
+
+  _onDoubleClick = e =>{
+    this.toggleZoom();
+  };
+
   render() {
     const { className, value, ...props } = this.props;
-    const { scrollerWidth, activeIndex } = this.state;
+    const { zoom, scrollerWidth, activeIndex } = this.state;
+
     return (
       <section {...props} ref="root" className={classNames('react-gallery', className)}>
         <header className="react-gallery-hd">
           { `${this.current}/${this.total}` } &nbsp;
           HEADER INFO
+          <button onClick={this.toggleZoom}>ToggleZoom</button>
+          <button onClick={this.toggleFullScreen}>FullScreen</button>
         </header>
         <div className="react-gallery-bd">
           <div className="react-gallery-scroller"
@@ -141,8 +179,17 @@ export default class extends Component {
             {
               value.map((item, index) => {
                 return (
-                  <figure className="react-gallery-item" key={index} style={{ width: `${100 / value.length}%` }}>
-                    <img data-action="zoom" src={item.src} alt="" data-action="zoom" data-original={item.original} />
+                  <figure
+                  data-active={activeIndex === index}
+                  className="react-gallery-item"
+                  key={index}
+                  style={{ width: `${100 / value.length}%` }}>
+                    <img
+                    onDoubleClick={this._onDoubleClick}
+                    style={{ transform: `scale(${zoom})` }}
+                    src={item.src}
+                    data-action="zoom"
+                    data-original={item.original} />
                   </figure>
                 )
               })

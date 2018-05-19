@@ -15,7 +15,7 @@ class App extends React.Component{
         title: 'test0'
       },
       {
-        src: 'https://d33wubrfki0l68.cloudfront.net/c1fbaec1bbd10a4b4794803bac3a3128b860f11b/8d71e/images/image-6.jpg',
+        src: 'https://sachinchoolur.github.io/lightgallery.js/static/img/1-1600.jpg',
         original: 'http://placeholder.qiniudn.com/1200x1800',
         title: 'test1'
       },
