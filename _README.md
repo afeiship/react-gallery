@@ -32,3 +32,4 @@ BACKUP_USAGE
 ## resouces:
 + https://sachinchoolur.github.io/lightgallery.js/#lg=1&slide=2
 + https://desmonding.me/zooming/
++ https://medium-zoom.francoischalifour.com/
