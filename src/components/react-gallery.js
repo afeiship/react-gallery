@@ -138,7 +138,7 @@ export default class extends Component {
         {
           header(this) || (
             <header className="react-gallery-hd">
-              {`${this.current}/${this.length}`} &nbsp;
+              {`${this.current}/${this.length}`}
             </header>
           )
         }
