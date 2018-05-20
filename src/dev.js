@@ -15,7 +15,7 @@ class App extends React.Component{
         title: 'test0'
       },
       {
-        src: 'https://sachinchoolur.github.io/lightgallery.js/static/img/1-1600.jpg',
+        src: 'http://imgcdn.ph.126.net/UZkXTzO-A7jPMNzqA9ZAzA==/6632491633259813254.jpg',
         original: 'http://placeholder.qiniudn.com/1200x1800',
         title: 'test1'
       },
@@ -42,6 +42,7 @@ class App extends React.Component{
     window.demo = this;
     window.refs = this.refs;
     window.rc = this.refs.rc;
+    window.gg = ReactGallery;
   }
 
   _onChange = e =>{
@@ -52,7 +53,10 @@ class App extends React.Component{
     const { items } = this.state;
     return (
       <div className="hello-react-gallery">
-        <ReactGallery ref='rc' value={items} onChange={this._onChange} />
+        <ReactGallery ref='rc'
+            items={items}
+            value={2}
+            onChange={this._onChange} />
       </div>
     );
   }

@@ -4,8 +4,8 @@ var config = require('../config')
 var utils = require('./utils')
 var env = process.env.NODE_ENV;
 
-  // check env & config/index.js to decide weither to enable CSS Sourcemaps for the
-  // various preprocessor loaders added to vue-loader at the end of this file
+// check env & config/index.js to decide weither to enable CSS Sourcemaps for the
+// various preprocessor loaders added to vue-loader at the end of this file
 var cssSourceMapDev = (env === 'development' && config.dev.cssSourceMap)
 var cssSourceMapProd = (env === 'production' && config.build.productionSourceMap)
 var useCssSourceMap = cssSourceMapDev || cssSourceMapProd;
@@ -14,12 +14,12 @@ var externals = process.env.NODE_ENV === 'production' ? {
   'react': 'react',
   'classnames': 'classnames',
   'react-dom': 'react-dom',
-  'noop':'noop',
-  'medium-zoom':'medium-zoom',
-  'next-dom-event':'next-dom-event',
-  'webkit-sassui-icon-line-arrow':'webkit-sassui-icon-line-arrow',
-  'object-assign':'object-assign',
-  'prop-types':'prop-types',
+  'noop': 'noop',
+  'mixin-decorator': 'mixin-decorator',
+  'next-dom-event': 'next-dom-event',
+  'webkit-sassui-icon-line-arrow': 'webkit-sassui-icon-line-arrow',
+  'object-assign': 'object-assign',
+  'prop-types': 'prop-types',
 } : {};
 
 module.exports = {
@@ -32,26 +32,28 @@ module.exports = {
     filename: '[name].js'
   },
   resolve: {
-    extensions: ['', '.js', '.jsx','.scss'],
+    extensions: ['', '.js', '.jsx', '.scss'],
     fallback: [path.join(__dirname, '../node_modules')],
     alias: {
       React: path.resolve(__dirname, '../node_modules/react'),
       ReactDOM: path.resolve(__dirname, '../node_modules/react-dom'),
       'src': path.resolve(__dirname, '../src'),
+      'mixins': path.resolve(__dirname, '../src/components'),
       'assets': path.resolve(__dirname, '../src/assets'),
       'components': path.resolve(__dirname, '../src/components')
     }
   },
-  plugins:[
+  plugins: [
     new CopyWebpackPlugin([
       {
-        from:'./src/components/style.scss',
-        to:'./style.scss',
+        from: './src/components/style.scss',
+        to: './style.scss',
       }
     ]),
     new webpack.ProvidePlugin({
-        'React': 'react',
-        'ReactDOM': 'react-dom'
+      'React': 'react',
+      'ReactDOM': 'react-dom',
+      'mixin': 'mixin-decorator',
     }),
   ],
   resolveLoader: {
@@ -66,7 +68,7 @@ module.exports = {
     }, {
       test: /\.css$/,
       loader: 'style-loader!css-loader!autoprefixer-loader',
-    },  {
+    }, {
       test: /\.scss$/,
       loader: 'style-loader!css-loader!autoprefixer-loader!sass-loader'
     }, {
@@ -80,7 +82,7 @@ module.exports = {
       loader: 'html-loader'
     }, {
       test: /\.js|jsx$/,
-      loaders: ["react-hot-loader/webpack",'babel-loader?presets[]=react,presets[]=es2015'],
+      loaders: ["react-hot-loader/webpack", 'babel-loader?presets[]=react,presets[]=es2015'],
       include: path.join(__dirname, 'js')
     }]
   }

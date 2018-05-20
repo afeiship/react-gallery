@@ -7,58 +7,75 @@ import objectAssign from 'object-assign';
 import NxDomEvent from 'next-dom-event';
 
 //  afeiship/webkit-sassui-icon-line-arrow
+@mixin(['zoom', 'fullscreen', 'keyboard'])
 export default class extends Component {
   /*===properties start===*/
   static propTypes = {
     className: PropTypes.string,
-    value: PropTypes.array,
-    onChange: PropTypes.func
+    items: PropTypes.array,
+    value: PropTypes.number,
+    onChange: PropTypes.func,
+    zoom: PropTypes.number,
+    header: PropTypes.func,
+    footer: PropTypes.func,
   };
 
   static defaultProps = {
-    value: [],
-    onChange: noop
+    items: [],
+    value: 0,
+    onChange: noop,
+    zoom: 1.8,
+    header: noop,
+    footer: noop,
   };
   /*===properties end===*/
 
   get prevDisabled() {
-    const { activeIndex } = this.state;
-    return activeIndex == 0;
+    const { value } = this.state;
+    return value == 0;
   }
 
   get nextDisabled() {
-    const { value } = this.props;
-    const { activeIndex } = this.state;
-    return activeIndex == value.length - 1;
+    const { items } = this.props;
+    const { value } = this.state;
+    return value == items.length - 1;
   }
 
-  get current(){
-    const { activeIndex } = this.state;
-    return activeIndex + 1;
+  get current() {
+    const { value } = this.state;
+    return value + 1;
   }
 
-  get total(){
-    const { value } = this.props;
-    return value.length;
+  get length() {
+    const { items } = this.props;
+    return items.length;
   }
 
-  constructor(props) {
-    super(props);
+  constructor(inProps) {
+    super(inProps);
     this.state = {
       zoom: 1,
+      animating: false,
       scrollerWidth: 0,
-      activeIndex: 0,
-      pageX: 0,
-      pageY: 0
+      value: inProps.value,
     };
+    this.change();
   }
 
   componentDidMount() {
     const { root } = this.refs;
-    const { value } = this.props;
     this._root = root;
-    this.setState({ scrollerWidth: root.clientWidth * value.length });
+    this.setState({ scrollerWidth: root.clientWidth * this.length });
     this.attachEvents();
+  }
+
+  componentWillReceiveProps(inProps){
+    const { value } = inProps;
+    if( value !== this.state.value ){
+      this.setState({ value }, () => {
+        this.change();
+      });
+    }
   }
 
   componentWillUnmount() {
@@ -68,115 +85,81 @@ export default class extends Component {
 
   attachEvents() {
     this._resizeRes = NxDomEvent.on(window, 'resize', () => {
-      this.setState({ scrollerWidth: this._root.clientWidth * this.props.value.length });
+      this.setState({ scrollerWidth: this._root.clientWidth * this.length });
     });
 
-    this._keyupRes = NxDomEvent.on(window, 'keyup', (inEvent) => {
-      const { code } = inEvent;
-      switch (code) {
-        case 'ArrowRight':
-          !this.nextDisabled && this.next();
-          break;
-        case 'ArrowLeft':
-          !this.prevDisabled && this.prev();
-          break;
-        case 'Enter':
-          this.toggleFullScreen();
-          break;
-        case 'Escape':
-          this.toggleZoom();
-          break;
-        case 'ArrowUp':
-          this.zoomIn();
-          break;
-        case 'ArrowDown':
-          this.zoomOut();
-          break;
-      }
+    this._loadRes = NxDomEvent.on(window, 'load', () => {
+      this.setState({ animating: true });
+    });
+
+    this._keyupRes = NxDomEvent.on(window, 'keyup', ({ code }) => {
+      (this[`on${code}`] || noop).call(this);
     });
   }
 
   detachEvents() {
     this._resizeRes.destroy();
+    this._loadRes.destroy();
     this._keyupRes.destroy();
   }
 
   change() {
-    const { activeIndex } = this.state;
+    const { value } = this.state;
     const { onChange } = this.props;
-    onChange({ target: { value: activeIndex } });
+    onChange({ target: { value: value } });
   }
 
   prev = () => {
-    this.setState({ activeIndex: --this.state.activeIndex }, () => {
+    this.setState({ value: --this.state.value }, () => {
       this.change();
     });
   };
 
   next = () => {
-    this.setState({ activeIndex: ++this.state.activeIndex }, () => {
+    this.setState({ value: ++this.state.value }, () => {
       this.change();
     });
   };
 
-  zoomIn() {
-    this.setState({ zoom: 1.8 });
-  }
-
-  zoomOut() {
-    this.setState({ zoom: 1 });
-  }
-
-  toggleZoom = () =>{
-    const zoom = this.state.zoom  === 1 ? 1.8 : 1;
-    this.setState({ zoom });
-  };
-
-  toggleFullScreen = () =>{
-    document.documentElement.webkitRequestFullScreen();
-  };
-
-  _onDoubleClick = inEvent =>{
-    const { pageX, pageY } = inEvent;
-    this.setState({ pageX , pageY});
-    this.toggleZoom();
+  _onDoubleClick = inEvent => {
+    this.zoomToggle();
   };
 
   render() {
-    const { className, value, ...props } = this.props;
-    const { zoom, scrollerWidth, activeIndex, pageX, pageY } = this.state;
+    const { className, items, zoom, header, footer, extra, ...props } = this.props;
+    const { scrollerWidth, value, animating } = this.state;
 
     return (
       <section {...props} ref="root" className={classNames('react-gallery', className)}>
-        <header className="react-gallery-hd">
-          { `${this.current}/${this.total}` } &nbsp;
-          HEADER INFO
-          <button onClick={this.toggleZoom}>ToggleZoom</button>
-          <button onClick={this.toggleFullScreen}>FullScreen</button>
-        </header>
+        {
+          header(this) || (
+            <header className="react-gallery-hd">
+              {`${this.current}/${this.length}`} &nbsp;
+            </header>
+          )
+        }
         <div className="react-gallery-bd">
           <div className="react-gallery-scroller"
+            data-animating={animating}
             style={{
               width: scrollerWidth + 'px',
-              transform: `translate3d(-${(activeIndex) / value.length * scrollerWidth}px, 0, 0)`
+              transform: `translate3d(-${(value) / this.length * scrollerWidth}px, 0, 0)`
             }}>
             {
-              value.map((item, index) => {
+              items.map((item, index) => {
                 return (
                   <figure
-                  data-active={activeIndex === index}
-                  className="react-gallery-item"
-                  key={index}
-                  style={{ width: `${100 / value.length}%` }}>
+                    data-active={value === index}
+                    className="react-gallery-item"
+                    key={index}
+                    style={{ width: `${100 / this.length}%` }}>
                     <img
-                    onDoubleClick={this._onDoubleClick}
-                    style={{
-                      transform: `scale(${zoom})`,
-                      transformOrigin: `${pageX}px ${pageY}px`
-                    }}
-                    src={item.src}
-                    data-action="zoom"
-                    data-original={item.original} />
+                      onDoubleClick={this._onDoubleClick}
+                      style={{
+                        transform: `scale(${this.state.zoom})`
+                      }}
+                      src={item.src}
+                      data-original={item.original} />
                   </figure>
                 )
               })
@@ -195,9 +178,13 @@ export default class extends Component {
           hidden={this.nextDisabled}>
           <i className="webkit-sassui-icon-line-arrow" data-direction="right" data-type="hairline" />
         </button>
-        <footer className="react-gallery-ft">
-          {value[activeIndex].title}
-        </footer>
+        {
+          footer(this) || (
+            <footer className="react-gallery-ft">
+              {items[value].title}
+            </footer>
+          )
+        }
       </section>
     );
   }
