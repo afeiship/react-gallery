@@ -16,8 +16,10 @@ export default class extends Component {
     value: PropTypes.number,
     onChange: PropTypes.func,
     zoom: PropTypes.number,
+    template: PropTypes.func,
     header: PropTypes.func,
     footer: PropTypes.func,
+    extra: PropTypes.func,
   };
 
   static defaultProps = {
@@ -25,8 +27,10 @@ export default class extends Component {
     value: 0,
     onChange: noop,
     zoom: 1.8,
+    template: noop,
     header: noop,
     footer: noop,
+    extra: noop,
   };
   /*===properties end===*/
 
@@ -126,7 +130,7 @@ export default class extends Component {
   };
 
   render() {
-    const { className, items, zoom, header, footer, extra, ...props } = this.props;
+    const { className, items, zoom, template, header, footer, extra, ...props } = this.props;
     const { scrollerWidth, value, animating } = this.state;
 
     return (
@@ -148,19 +152,20 @@ export default class extends Component {
             {
               items.map((item, index) => {
                 return (
-                  <figure
-                    data-active={value === index}
-                    className="react-gallery-item"
-                    key={index}
-                    style={{ width: `${100 / this.length}%` }}>
-                    <img
-                      onDoubleClick={this._onDoubleClick}
-                      style={{
-                        transform: `scale(${this.state.zoom})`
-                      }}
-                      src={item.src}
-                      data-original={item.original} />
-                  </figure>
+                  template(item, index, this) || (
+                    <figure
+                      data-active={value === index}
+                      className="react-gallery-item"
+                      key={index}
+                      style={{ width: `${100 / this.length}%` }}>
+                      <img
+                        onDoubleClick={this._onDoubleClick}
+                        style={{
+                          transform: `scale(${this.state.zoom})`
+                        }}
+                        src={item.src} />
+                    </figure>
+                  )
                 )
               })
             }
@@ -185,6 +190,8 @@ export default class extends Component {
             </footer>
           )
         }
+
+        { extra(this) }
       </section>
     );
   }

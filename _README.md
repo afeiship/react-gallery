@@ -34,3 +34,7 @@ BACKUP_USAGE
 + https://desmonding.me/zooming/
 + https://medium-zoom.francoischalifour.com/
 + https://jsfiddle.net/pow4ngbw/70/
+
+
+## todos:
++ [ ] lazy loading
