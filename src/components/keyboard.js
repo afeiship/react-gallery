@@ -14,7 +14,4 @@ export default class {
   onEnter() {
     this.fullScreenToggle();
   }
-  onEscape() {
-    this.zoomToggle();
-  }
 }

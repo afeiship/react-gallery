@@ -163,7 +163,7 @@ export default class extends Component {
             {
               items.map((item, index) => {
                 return (
-                  template(item, index, this) || (
+                  template(this, item, index) || (
                     <figure
                       data-active={value === index}
                       className="react-gallery-item"
