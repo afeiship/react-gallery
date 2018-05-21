@@ -15,6 +15,6 @@ export default class {
     this.fullScreenToggle();
   }
   onEscape() {
-    this.toggleZoom();
+    this.zoomToggle();
   }
 }

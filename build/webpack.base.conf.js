@@ -17,6 +17,7 @@ var externals = process.env.NODE_ENV === 'production' ? {
   'noop': 'noop',
   'mixin-decorator': 'mixin-decorator',
   'next-dom-event': 'next-dom-event',
+  'webkit-sassui-transform-center': 'webkit-sassui-transform-center',
   'webkit-sassui-icon-line-arrow': 'webkit-sassui-icon-line-arrow',
   'object-assign': 'object-assign',
   'prop-types': 'prop-types',

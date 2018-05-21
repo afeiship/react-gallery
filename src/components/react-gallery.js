@@ -6,8 +6,14 @@ import noop from 'noop';
 import objectAssign from 'object-assign';
 import NxDomEvent from 'next-dom-event';
 
+// in components must use this type:
+import Zoom from './zoom';
+import FullScreen from './fullscreen';
+import Keyboard from './keyboard';
+
+
 //  afeiship/webkit-sassui-icon-line-arrow
-@mixin(['zoom', 'fullscreen', 'keyboard'])
+@mixin([Zoom, FullScreen,Keyboard])
 export default class extends Component {
   /*===properties start===*/
   static propTypes = {
@@ -15,6 +21,7 @@ export default class extends Component {
     items: PropTypes.array,
     value: PropTypes.number,
     onChange: PropTypes.func,
+    onKeyUp: PropTypes.func,
     zoom: PropTypes.number,
     template: PropTypes.func,
     header: PropTypes.func,
@@ -26,6 +33,7 @@ export default class extends Component {
     items: [],
     value: 0,
     onChange: noop,
+    onKeyUp: noop,
     zoom: 1.8,
     template: noop,
     header: noop,
@@ -70,6 +78,7 @@ export default class extends Component {
     const { root } = this.refs;
     this._root = root;
     this.setState({ scrollerWidth: root.clientWidth * this.length });
+    this.useAnimating();
     this.attachEvents();
   }
 
@@ -91,20 +100,22 @@ export default class extends Component {
     this._resizeRes = NxDomEvent.on(window, 'resize', () => {
       this.setState({ scrollerWidth: this._root.clientWidth * this.length });
     });
-
-    this._loadRes = NxDomEvent.on(window, 'load', () => {
-      this.setState({ animating: true });
-    });
-
     this._keyupRes = NxDomEvent.on(window, 'keyup', ({ code }) => {
       (this[`on${code}`] || noop).call(this);
+      this.props.onKeyUp(code);
     });
   }
 
   detachEvents() {
     this._resizeRes.destroy();
-    this._loadRes.destroy();
     this._keyupRes.destroy();
+  }
+
+  useAnimating(){
+    const timer = setTimeout(()=>{
+      this.setState({ animating: true });
+      clearTimeout(timer);
+    });
   }
 
   change() {

@@ -4,12 +4,13 @@ $react-gallery-options:(
 )!default;
 
 @import 'node_modules/webkit-sassui-icon-line-arrow/dist/webkit-sassui-icon-line-arrow.scss';
+@import 'node_modules/webkit-sassui-transform-center/dist/webkit-sassui-transform-center.scss';
 
 .react-gallery{
   $hdHeight: map-get($map: $react-gallery-options, $key: hdHeight);
   $ftHeight: map-get($map: $react-gallery-options, $key: ftHeight);
 
-  position: absolute;
+  position: fixed;
   top: 0;
   bottom: 0;
   left: 0;
@@ -87,6 +88,11 @@ $react-gallery-options:(
     outline: none;
     border:none;
     background: rgba(#000, 0.2);
+
+    > i{
+      font-size: 30px;
+      @extend .webkit-sassui-transform-center-y;
+    }
   }
 
   &-prev{

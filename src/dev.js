@@ -73,9 +73,8 @@ class App extends React.Component{
     return (
       <div className="hello-react-gallery">
         <ReactGallery ref='rc'
-            items={items}
             value={2}
-            onChange={this._onChange} />
+            items={items} />
       </div>
     );
   }
