@@ -12,6 +12,28 @@ class App extends React.Component{
   state = {
     items:[
       {
+        src: 'https://gw.alicdn.com/tfs/TB18BqkrKOSBuNjy0FdXXbDnVXa-1920-560.jpg',
+        title: 'test0'
+      },
+      {
+        src: 'http://imgcdn.ph.126.net/UZkXTzO-A7jPMNzqA9ZAzA==/6632491633259813254.jpg',
+        title: 'test1'
+      },
+      {
+        src: 'https://gdp.alicdn.com/imgextra/i2/157935207/TB2j6bBq1OSBuNjy0FdXXbDnVXa_!!157935207.jpg',
+        title: 'test2'
+      },
+      {
+        src: 'https://img.alicdn.com/tps/i4/TB1NNBJqx9YBuNjy0FfSutIsVXa.jpg_1080x1800Q60s50.jpg',
+        title: 'test3'
+      },
+      {
+        src: 'https://img.alicdn.com/imgextra/i3/3305364521/TB2QOJBqStYBeNjSspkXXbU8VXa_!!3305364521.jpg',
+        title: 'test3'
+      }
+    ],
+    hardItems: [
+      {
         src: 'https://d33wubrfki0l68.cloudfront.net/0ca2cd8674ea552c7555ffa2f48e94334d564106/165a7/images/image-3.jpg',
         title: 'test0'
       },
@@ -47,7 +69,7 @@ class App extends React.Component{
   };
 
   render(){
-    const { items } = this.state;
+    const { items, hardItems } = this.state;
     return (
       <div className="hello-react-gallery">
         <ReactGallery ref='rc'
