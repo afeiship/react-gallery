@@ -121,7 +121,7 @@ export default class extends Component {
   change() {
     const { value } = this.state;
     const { onChange } = this.props;
-    onChange({ target: { value: value } });
+    onChange({ target: { value } });
   }
 
   prev = () => {
