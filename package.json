@@ -81,6 +81,10 @@
     "node": ">= 4.0.0",
     "npm": ">= 3.0.0"
   },
+  "peerDependencies": {
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1"
+  },
   "dependencies": {
     "classnames": "^2.2.5",
     "mixin-decorator": "github:afeiship/mixin-decorator",
@@ -88,8 +92,6 @@
     "noop": "github:afeiship/noop",
     "object-assign": "^4.1.1",
     "prop-types": "^15.5.10",
-    "react": "^15.4.1",
-    "react-dom": "^15.4.1",
     "webkit-sassui-icon-line-arrow": "github:afeiship/webkit-sassui-icon-line-arrow",
     "webkit-sassui-transform-center": "github:afeiship/webkit-sassui-transform-center"
   }
